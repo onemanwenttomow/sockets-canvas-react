@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom";
+import App from "./app";
+import io from "socket.io-client";
+export const socket = io.connect();
 
-ReactDOM.render(<HelloWorld />, document.querySelector("main"));
-
-function HelloWorld() {
-    return <div>Hello, World!</div>;
-}
+ReactDOM.render(<App />, document.querySelector("main"));
