@@ -6,13 +6,22 @@ export default function Canvas() {
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
     const [isDrawer, setIsDrawer] = useState(false);
+    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth);
+    const [canvasHeight, setCanvasHeight] = useState(window.innerHeight);
 
     useEffect(() => {
         socket.on("drawing", (data) =>
             drawLine(data.mousePosition, data.newMousePosition)
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
+        window.addEventListener("resize", onResize, false);
     }, []);
+
+    function onResize() {
+        console.log("resizing,...");
+        setCanvasWidth(window.innerWidth);
+        setCanvasHeight(window.innerHeight);
+    }
 
     const startPaint = useCallback((event) => {
         const coordinates = getCoordinates(event);
@@ -48,8 +57,8 @@ export default function Canvas() {
         const x = event.pageX || event.touches[0].clientX;
         const y = event.pageY || event.touches[0].clientY;
         return {
-            x: x - canvas.offsetLeft,
-            y: y - canvas.offsetTop,
+            x: (x - canvas.offsetLeft) / canvasWidth,
+            y: (y - canvas.offsetTop) / canvasHeight,
         };
     };
 
@@ -64,8 +73,14 @@ export default function Canvas() {
             context.lineWidth = 10;
 
             context.beginPath();
-            context.moveTo(originalMousePosition.x, originalMousePosition.y);
-            context.lineTo(newMousePosition.x, newMousePosition.y);
+            context.moveTo(
+                originalMousePosition.x * canvasWidth,
+                originalMousePosition.y * canvasHeight
+            );
+            context.lineTo(
+                newMousePosition.x * canvasWidth,
+                newMousePosition.y * canvasHeight
+            );
             context.closePath();
 
             context.stroke();
@@ -74,11 +89,11 @@ export default function Canvas() {
 
     return (
         <>
-            <h1>isDrawer: {`${isDrawer}`}</h1>
+            {/* <h1>isDrawer: {`${isDrawer}`}</h1> */}
             <canvas
                 ref={canvasRef}
-                height="500px"
-                width="500px"
+                height={canvasHeight}
+                width={canvasWidth}
                 onMouseDown={startPaint}
                 onMouseMove={paint}
                 onMouseUp={exitPaint}
@@ -87,7 +102,6 @@ export default function Canvas() {
                 onTouchMove={paint}
                 onTouchEnd={exitPaint}
             />
-            ;
         </>
     );
 }

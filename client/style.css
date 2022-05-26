@@ -1,5 +1,7 @@
 html,
-body {
+body,
+main,
+.wrapper {
     height: 100%;
 }
 
@@ -13,9 +15,11 @@ body {
 }
 
 canvas {
-    border: 2px solid red;
-}
-
-.wrapper {
-    display: flex;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
 }
