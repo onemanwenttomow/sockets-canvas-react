@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { socket } from "./start";
-// test
+
 export default function Canvas() {
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
