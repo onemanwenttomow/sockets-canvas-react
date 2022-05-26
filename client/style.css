@@ -6,6 +6,7 @@ main,
 }
 
 body {
+    overscroll-behavior-y: contain;
     background-color: ghostwhite;
 }
 
