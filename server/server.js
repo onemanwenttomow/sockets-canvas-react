@@ -26,14 +26,26 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
+let drawer = null;
+
 io.on("connection", (socket) => {
     console.log("connect: ", socket.id);
-    socket.on("drawing", (dataUrl) => {
-        console.log("drawing!", dataUrl);
-        io.emit("drawing", dataUrl);
+
+    if (!drawer) {
+        drawer = socket.id;
+        socket.emit("isDrawer", true);
+    }
+    socket.on("drawing", (data) => {
+        socket.broadcast.emit("drawing", data);
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
         console.log("disconnect", socket.id);
+        const ids = await io.allSockets();
+        console.log("io.allSockets() is currently:");
+        console.log([...ids]);
+        drawer = [...ids][0];
+
+        io.to(drawer).emit("isDrawer", true);
     });
 });

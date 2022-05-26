@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { socket } from "./start";
 
-export default function Canvas({ setCanvasDataUrl }) {
+export default function Canvas() {
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
+    const [isDrawer, setIsDrawer] = useState(false);
+
+    useEffect(() => {
+        socket.on("drawing", (data) =>
+            drawLine(data.mousePosition, data.newMousePosition)
+        );
+        socket.on("isDrawer", (data) => setIsDrawer(data));
+    }, []);
 
     const startPaint = useCallback((event) => {
         const coordinates = getCoordinates(event);
@@ -24,14 +32,12 @@ export default function Canvas({ setCanvasDataUrl }) {
 
     const paint = useCallback(
         (event) => {
-            if (isPainting) {
+            if (isPainting && isDrawer) {
                 const newMousePosition = getCoordinates(event);
                 if (mousePosition && newMousePosition) {
                     drawLine(mousePosition, newMousePosition);
                     setMousePosition(newMousePosition);
-                    const canvas = canvasRef.current;
-                    const dataUrl = canvas.toDataURL();
-                    socket.emit("drawing", dataUrl);
+                    socket.emit("drawing", { mousePosition, newMousePosition });
                 }
             }
         },
@@ -48,9 +54,6 @@ export default function Canvas({ setCanvasDataUrl }) {
     }, [paint]);
 
     const exitPaint = useCallback(() => {
-        const canvas = canvasRef.current;
-        const dataUrl = canvas.toDataURL();
-        setCanvasDataUrl(dataUrl);
         setIsPainting(false);
         setMousePosition(undefined);
     }, []);
@@ -96,5 +99,10 @@ export default function Canvas({ setCanvasDataUrl }) {
         }
     };
 
-    return <canvas ref={canvasRef} height="500px" width="500px" />;
+    return (
+        <>
+            <h1>isDrawer: {`${isDrawer}`}</h1>
+            <canvas ref={canvasRef} height="500px" width="500px" />;
+        </>
+    );
 }
