@@ -42,10 +42,7 @@ io.on("connection", (socket) => {
     socket.on("disconnect", async () => {
         console.log("disconnect", socket.id);
         const ids = await io.allSockets();
-        console.log("io.allSockets() is currently:");
-        console.log([...ids]);
         drawer = [...ids][0];
-
         io.to(drawer).emit("isDrawer", true);
     });
 });

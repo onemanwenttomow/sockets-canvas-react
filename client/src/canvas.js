@@ -22,14 +22,6 @@ export default function Canvas() {
         }
     }, []);
 
-    useEffect(() => {
-        if (!canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        canvas.addEventListener("mousedown", startPaint);
-        return () => canvas.removeEventListener("mousedown", startPaint);
-    }, [startPaint]);
-
     const paint = useCallback(
         (event) => {
             if (isPainting && isDrawer) {
@@ -44,39 +36,20 @@ export default function Canvas() {
         [isPainting, mousePosition]
     );
 
-    useEffect(() => {
-        if (!canvasRef.current) {
-            return;
-        }
-        const canvas = canvasRef.current;
-        canvas.addEventListener("mousemove", paint);
-        return () => canvas.removeEventListener("mousemove", paint);
-    }, [paint]);
-
     const exitPaint = useCallback(() => {
         setIsPainting(false);
         setMousePosition(undefined);
     }, []);
 
-    useEffect(() => {
-        if (!canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        canvas.addEventListener("mouseup", exitPaint);
-        canvas.addEventListener("mouseleave", exitPaint);
-        return () => {
-            canvas.removeEventListener("mouseup", exitPaint);
-            canvas.removeEventListener("mouseleave", exitPaint);
-        };
-    }, [exitPaint]);
-
     const getCoordinates = (event) => {
         if (!canvasRef.current) return;
 
         const canvas = canvasRef.current;
+        const x = event.pageX || event.touches[0].clientX;
+        const y = event.pageY || event.touches[0].clientY;
         return {
-            x: event.pageX - canvas.offsetLeft,
-            y: event.pageY - canvas.offsetTop,
+            x: x - canvas.offsetLeft,
+            y: y - canvas.offsetTop,
         };
     };
 
@@ -102,7 +75,19 @@ export default function Canvas() {
     return (
         <>
             <h1>isDrawer: {`${isDrawer}`}</h1>
-            <canvas ref={canvasRef} height="500px" width="500px" />;
+            <canvas
+                ref={canvasRef}
+                height="500px"
+                width="500px"
+                onMouseDown={startPaint}
+                onMouseMove={paint}
+                onMouseUp={exitPaint}
+                onMouseLeave={exitPaint}
+                onTouchStart={startPaint}
+                onTouchMove={paint}
+                onTouchEnd={exitPaint}
+            />
+            ;
         </>
     );
 }
