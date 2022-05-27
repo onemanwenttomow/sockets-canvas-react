@@ -24,9 +24,6 @@ export default function App() {
 
     return (
         <div ref={wrapper} className="wrapper">
-            <div className="debug">
-                h:{height}, w:{width}
-            </div>
             {width && (
                 <Canvas height={height} width={width} offsetLeft={offsetLeft} />
             )}
