@@ -24,3 +24,44 @@ canvas {
     bottom: 0;
     top: 0;
 }
+
+.colors-wrapper {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+}
+
+.colors-wrapper div {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.hotpink {
+    background-color: hotpink;
+}
+.blue {
+    background-color: blue;
+}
+.yellow {
+    background-color: yellow;
+}
+.black {
+    background-color: black;
+}
+.red {
+    background-color: red;
+}
+
+.colors-wrapper div.active::after {
+    content: "";
+    position: absolute;
+    height: 4px;
+    width: 50px;
+    background-color: green;
+    bottom: -8px;
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { socket } from "./start";
 
 export default function Canvas() {
@@ -8,49 +8,50 @@ export default function Canvas() {
     const [isDrawer, setIsDrawer] = useState(false);
     const [canvasWidth, setCanvasWidth] = useState(window.innerWidth);
     const [canvasHeight, setCanvasHeight] = useState(window.innerHeight);
+    const [color, setColor] = useState("black");
 
     useEffect(() => {
         socket.on("drawing", (data) =>
-            drawLine(data.mousePosition, data.newMousePosition)
+            drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
         window.addEventListener("resize", onResize, false);
     }, []);
 
     function onResize() {
-        console.log("resizing,...");
         setCanvasWidth(window.innerWidth);
         setCanvasHeight(window.innerHeight);
     }
 
-    const startPaint = useCallback((event) => {
+    function startPaint(event) {
         const coordinates = getCoordinates(event);
         if (coordinates) {
             setMousePosition(coordinates);
             setIsPainting(true);
         }
-    }, []);
+    }
 
-    const paint = useCallback(
-        (event) => {
-            if (isPainting && isDrawer) {
-                const newMousePosition = getCoordinates(event);
-                if (mousePosition && newMousePosition) {
-                    drawLine(mousePosition, newMousePosition);
-                    setMousePosition(newMousePosition);
-                    socket.emit("drawing", { mousePosition, newMousePosition });
-                }
+    function paint(event) {
+        if (isPainting && isDrawer) {
+            const newMousePosition = getCoordinates(event);
+            if (mousePosition && newMousePosition) {
+                drawLine(mousePosition, newMousePosition, color);
+                setMousePosition(newMousePosition);
+                socket.emit("drawing", {
+                    mousePosition,
+                    newMousePosition,
+                    color,
+                });
             }
-        },
-        [isPainting, mousePosition]
-    );
+        }
+    }
 
-    const exitPaint = useCallback(() => {
+    function exitPaint() {
         setIsPainting(false);
         setMousePosition(undefined);
-    }, []);
+    }
 
-    const getCoordinates = (event) => {
+    function getCoordinates(event) {
         if (!canvasRef.current) return;
 
         const canvas = canvasRef.current;
@@ -60,15 +61,15 @@ export default function Canvas() {
             x: (x - canvas.offsetLeft) / canvasWidth,
             y: (y - canvas.offsetTop) / canvasHeight,
         };
-    };
+    }
 
-    const drawLine = (originalMousePosition, newMousePosition) => {
+    function drawLine(originalMousePosition, newMousePosition, color) {
         if (!canvasRef.current) return;
 
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         if (context) {
-            context.strokeStyle = "hotpink";
+            context.strokeStyle = color;
             context.lineJoin = "round";
             context.lineWidth = 10;
 
@@ -85,11 +86,42 @@ export default function Canvas() {
 
             context.stroke();
         }
-    };
+    }
+
+    function handleColorChange(newColor) {
+        setColor(newColor);
+    }
 
     return (
         <>
-            {/* <h1>isDrawer: {`${isDrawer}`}</h1> */}
+            {isDrawer && (
+                <div className="colors-wrapper">
+                    <div
+                        className={`hotpink ${
+                            color === "hotpink" ? "active" : ""
+                        }`}
+                        onClick={() => handleColorChange("hotpink")}
+                    ></div>
+                    <div
+                        className={`blue ${color === "blue" ? "active" : ""}`}
+                        onClick={() => handleColorChange("blue")}
+                    ></div>
+                    <div
+                        className={`yellow ${
+                            color === "yellow" ? "active" : ""
+                        }`}
+                        onClick={() => handleColorChange("yellow")}
+                    ></div>
+                    <div
+                        className={`black ${color === "black" ? "active" : ""}`}
+                        onClick={() => handleColorChange("black")}
+                    ></div>
+                    <div
+                        className={`red ${color === "red" ? "active" : ""}`}
+                        onClick={() => handleColorChange("red")}
+                    ></div>
+                </div>
+            )}
             <canvas
                 ref={canvasRef}
                 height={canvasHeight}
