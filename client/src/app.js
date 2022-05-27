@@ -20,13 +20,9 @@ export default function App() {
         setOffsetLeft(wrapper.current.offsetLeft);
     }
 
-    console.log("width, height: ", width, height);
-
     return (
         <div ref={wrapper} className="wrapper">
-            {width && (
-                <Canvas height={height} width={width} offsetLeft={offsetLeft} />
-            )}
+            <Canvas height={height} width={width} offsetLeft={offsetLeft} />
         </div>
     );
 }

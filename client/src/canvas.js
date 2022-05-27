@@ -15,8 +15,13 @@ export default function Canvas({ height, width, offsetLeft }) {
             drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
-        socket.on("clearCanvas", () => clearCanvas());
-    }, []);
+        socket.on("clearCanvas", clearCanvas);
+        return () => {
+            socket.removeListener("clearCanvas");
+            socket.removeListener("drawing");
+            socket.removeListener("isDrawer");
+        };
+    }, [width, height]);
 
     function startPaint(event) {
         const coordinates = getCoordinates(event);
@@ -90,11 +95,8 @@ export default function Canvas({ height, width, offsetLeft }) {
     function clearCanvas() {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
-        console.log("width, height: ", width, height);
         context.clearRect(0, 0, width, height);
     }
-
-    console.log("width, height in canvas: ", width, height);
 
     return (
         <>
