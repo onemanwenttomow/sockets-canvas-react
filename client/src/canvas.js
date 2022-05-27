@@ -3,13 +3,11 @@ import { socket } from "./start";
 import Picker from "./picker";
 import NextPlayer from "./next-player";
 
-export default function Canvas() {
+export default function Canvas({ height, width, offsetLeft }) {
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
     const [isDrawer, setIsDrawer] = useState(false);
-    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth);
-    const [canvasHeight, setCanvasHeight] = useState(window.innerHeight);
     const [color, setColor] = useState("black");
 
     useEffect(() => {
@@ -18,13 +16,7 @@ export default function Canvas() {
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
         socket.on("clearCanvas", () => clearCanvas());
-        window.addEventListener("resize", onResize, false);
     }, []);
-
-    function onResize() {
-        setCanvasWidth(window.innerWidth);
-        setCanvasHeight(window.innerHeight);
-    }
 
     function startPaint(event) {
         const coordinates = getCoordinates(event);
@@ -61,8 +53,8 @@ export default function Canvas() {
         const x = event.pageX || event.touches[0].clientX;
         const y = event.pageY || event.touches[0].clientY;
         return {
-            x: (x - canvas.offsetLeft) / canvasWidth,
-            y: (y - canvas.offsetTop) / canvasHeight,
+            x: (x - offsetLeft) / width,
+            y: (y - canvas.offsetTop) / height,
         };
     }
 
@@ -78,12 +70,12 @@ export default function Canvas() {
 
             context.beginPath();
             context.moveTo(
-                originalMousePosition.x * canvasWidth,
-                originalMousePosition.y * canvasHeight
+                originalMousePosition.x * width,
+                originalMousePosition.y * height
             );
             context.lineTo(
-                newMousePosition.x * canvasWidth,
-                newMousePosition.y * canvasHeight
+                newMousePosition.x * width,
+                newMousePosition.y * height
             );
             context.closePath();
 
@@ -98,7 +90,7 @@ export default function Canvas() {
     function clearCanvas() {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
+        context.clearRect(0, 0, width, height);
     }
 
     return (
@@ -108,8 +100,8 @@ export default function Canvas() {
             )}
             <canvas
                 ref={canvasRef}
-                height={canvasHeight}
-                width={canvasWidth}
+                height={height}
+                width={width}
                 onMouseDown={startPaint}
                 onMouseMove={paint}
                 onMouseUp={exitPaint}

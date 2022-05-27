@@ -19,6 +19,12 @@ body {
     --picker-gap: 16px;
 }
 
+.wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 canvas {
     height: 100%;
     width: 100%;
@@ -27,6 +33,7 @@ canvas {
     right: 0;
     bottom: 0;
     top: 0;
+    background-color: white;
 }
 
 .next-player {
