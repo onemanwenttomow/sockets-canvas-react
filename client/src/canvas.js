@@ -90,8 +90,11 @@ export default function Canvas({ height, width, offsetLeft }) {
     function clearCanvas() {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
+        console.log("width, height: ", width, height);
         context.clearRect(0, 0, width, height);
     }
+
+    console.log("width, height in canvas: ", width, height);
 
     return (
         <>

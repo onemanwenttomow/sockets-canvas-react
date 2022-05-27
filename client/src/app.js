@@ -3,8 +3,8 @@ import Canvas from "./canvas";
 
 export default function App() {
     const wrapper = useRef(null);
-    const [width, setWidth] = useState(600);
-    const [height, setHeight] = useState(600);
+    const [height, setHeight] = useState(null);
+    const [width, setWidth] = useState(null);
     const [offsetLeft, setOffsetLeft] = useState(0);
 
     useEffect(() => {
@@ -20,12 +20,16 @@ export default function App() {
         setOffsetLeft(wrapper.current.offsetLeft);
     }
 
+    console.log("width, height: ", width, height);
+
     return (
         <div ref={wrapper} className="wrapper">
             <div className="debug">
                 h:{height}, w:{width}
             </div>
-            <Canvas height={height} width={width} offsetLeft={offsetLeft} />
+            {width && (
+                <Canvas height={height} width={width} offsetLeft={offsetLeft} />
+            )}
         </div>
     );
 }
