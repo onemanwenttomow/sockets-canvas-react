@@ -35,8 +35,27 @@ io.on("connection", (socket) => {
         drawer = socket.id;
         socket.emit("isDrawer", true);
     }
+
     socket.on("drawing", (data) => {
         socket.broadcast.emit("drawing", data);
+    });
+
+    socket.on("nextPlayer", async () => {
+        console.log("next player", socket.id);
+        io.emit("clearCanvas");
+        const idsSet = await io.allSockets();
+        const ids = [...idsSet];
+        if (ids.length <= 1) {
+            console.log("not enough players...");
+            return;
+        }
+        const [newId] = ids.filter((id) => id !== socket.id);
+        drawer = newId;
+        io.emit("isDrawer", false);
+        io.to(newId).emit("isDrawer", true);
+
+        console.log("newId: ", newId);
+        console.log("ids: ", ids);
     });
 
     socket.on("disconnect", async () => {

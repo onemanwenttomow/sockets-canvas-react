@@ -25,6 +25,18 @@ canvas {
     top: 0;
 }
 
+.next-player {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.6rem;
+    padding: 16px;
+    background-color: royalblue;
+    border: none;
+    color: white;
+    text-transform: uppercase;
+}
+
 .colors-wrapper {
     position: absolute;
     z-index: 2;

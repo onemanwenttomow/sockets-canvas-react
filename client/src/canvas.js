@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { socket } from "./start";
+import Picker from "./picker";
+import NextPlayer from "./next-player";
 
 export default function Canvas() {
     const canvasRef = useRef(null);
@@ -15,6 +17,7 @@ export default function Canvas() {
             drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
+        socket.on("clearCanvas", () => clearCanvas());
         window.addEventListener("resize", onResize, false);
     }, []);
 
@@ -92,35 +95,16 @@ export default function Canvas() {
         setColor(newColor);
     }
 
+    function clearCanvas() {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
     return (
         <>
             {isDrawer && (
-                <div className="colors-wrapper">
-                    <div
-                        className={`hotpink ${
-                            color === "hotpink" ? "active" : ""
-                        }`}
-                        onClick={() => handleColorChange("hotpink")}
-                    ></div>
-                    <div
-                        className={`blue ${color === "blue" ? "active" : ""}`}
-                        onClick={() => handleColorChange("blue")}
-                    ></div>
-                    <div
-                        className={`yellow ${
-                            color === "yellow" ? "active" : ""
-                        }`}
-                        onClick={() => handleColorChange("yellow")}
-                    ></div>
-                    <div
-                        className={`black ${color === "black" ? "active" : ""}`}
-                        onClick={() => handleColorChange("black")}
-                    ></div>
-                    <div
-                        className={`red ${color === "red" ? "active" : ""}`}
-                        onClick={() => handleColorChange("red")}
-                    ></div>
-                </div>
+                <Picker color={color} handleColorChange={handleColorChange} />
             )}
             <canvas
                 ref={canvasRef}
@@ -134,6 +118,7 @@ export default function Canvas() {
                 onTouchMove={paint}
                 onTouchEnd={exitPaint}
             />
+            {isDrawer && <NextPlayer />}
         </>
     );
 }
