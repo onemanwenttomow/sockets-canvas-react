@@ -2,25 +2,26 @@ export default function Picker({ color, handleColorChange }) {
     return (
         <div className="colors-wrapper">
             <div
-                className={`hotpink ${color === "hotpink" ? "active" : ""}`}
+                className="picker hotpink"
                 onClick={() => handleColorChange("hotpink")}
             ></div>
             <div
-                className={`blue ${color === "blue" ? "active" : ""}`}
+                className="picker blue"
                 onClick={() => handleColorChange("blue")}
             ></div>
             <div
-                className={`yellow ${color === "yellow" ? "active" : ""}`}
+                className="picker yellow"
                 onClick={() => handleColorChange("yellow")}
             ></div>
             <div
-                className={`black ${color === "black" ? "active" : ""}`}
+                className="picker black"
                 onClick={() => handleColorChange("black")}
             ></div>
             <div
-                className={`red ${color === "red" ? "active" : ""}`}
+                className="picker red"
                 onClick={() => handleColorChange("red")}
             ></div>
+            <div className={`active active-${color}`}></div>
         </div>
     );
 }
