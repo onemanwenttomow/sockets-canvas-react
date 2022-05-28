@@ -15,6 +15,9 @@ export default function Canvas({ height, width, offsetLeft }) {
             drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
         socket.on("isDrawer", (data) => setIsDrawer(data));
+        socket.on("drawDot", (data) =>
+            drawDot({ x: data.x, y: data.y }, data.color)
+        );
         socket.on("clearCanvas", clearCanvas);
         return () => {
             socket.removeListener("clearCanvas");
@@ -24,11 +27,27 @@ export default function Canvas({ height, width, offsetLeft }) {
     }, [width, height]);
 
     function startPaint(event) {
+        if (!isDrawer) return;
         const coordinates = getCoordinates(event);
         if (coordinates) {
             setMousePosition(coordinates);
             setIsPainting(true);
+            drawDot(coordinates, color);
+            socket.emit("drawDot", { ...coordinates, color });
         }
+    }
+
+    function drawDot({ x, y }, color) {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        context.beginPath();
+        context.arc(x * width, y * height, 5, 0, 2 * Math.PI, false);
+        context.lineWidth = 1;
+        context.lineJoin = "round";
+        context.fillStyle = color;
+        context.strokeStyle = color;
+        context.fill();
+        context.stroke();
     }
 
     function paint(event) {
