@@ -25,16 +25,6 @@ body {
     --picker-gap: 16px;
 }
 
-.wrapper {
-    position: relative;
-    max-width: 400px;
-    max-height: 800px;
-    margin: 0 auto;
-    top: 50%;
-    transform: translateY(-50%);
-    filter: drop-shadow(2px 4px 8px hsl(0deg 0% 0% / 0.4));
-}
-
 canvas {
     height: 100%;
     width: 100%;
@@ -46,16 +36,76 @@ canvas {
     background-color: white;
 }
 
-.next-player {
+.wrapper {
+    position: relative;
+    max-width: 400px;
+    max-height: 800px;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+    filter: drop-shadow(2px 4px 8px hsl(0deg 0% 0% / 0.4));
+}
+
+.bottom-wrapper {
     position: absolute;
     bottom: 0;
     width: 100%;
+    display: flex;
     font-size: 1.6rem;
+}
+
+.bottom-wrapper .word-to-draw,
+button {
+    flex: 1 1 0;
+    border: solid 2px hsl(225, 73%, 20%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 16px;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+}
+
+.bottom-wrapper input {
+    height: 100%;
+    padding: 16px;
+    font-size: 1.3rem;
+}
+
+.wrong-guess {
+    position: absolute;
+    bottom: 70px;
+    width: 100%;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-size: 1.3rem;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.correct-guess {
+    position: absolute;
+    bottom: 70px;
+    width: 100%;
+    text-align: center;
+    color: green;
+    font-weight: bold;
+    font-size: 1.3rem;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.wrong-guess.display,
+.correct-guess.display {
+    opacity: 1;
+}
+
+.next-player {
+    flex: 1 1 0;
+    color: white;
     background-color: hsl(225, 73%, 20%);
     border: none;
-    color: white;
-    text-transform: uppercase;
 }
 
 .colors-wrapper {

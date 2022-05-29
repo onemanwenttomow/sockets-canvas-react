@@ -3,6 +3,7 @@ import { socket } from "./start";
 import Canvas from "./canvas";
 import Picker from "./picker";
 import NextPlayer from "./next-player";
+import Guess from "./guess";
 
 export default function App() {
     const wrapper = useRef(null);
@@ -10,11 +11,21 @@ export default function App() {
     const [width, setWidth] = useState(null);
     const [offsetLeft, setOffsetLeft] = useState(0);
     const [offsetTop, setOffsetTop] = useState(0);
-    const [isDrawer, setIsDrawer] = useState(false);
+    const [wordToDrawer, setWordToDrawer] = useState(false);
     const [color, setColor] = useState("black");
+    const [wrongGuess, setWrongGuess] = useState("");
+    const [correctGuess, setCorrectGuess] = useState("");
 
     useEffect(() => {
-        socket.on("isDrawer", (data) => setIsDrawer(data));
+        socket.on("isDrawer", (data) => setWordToDrawer(data));
+        socket.on("wrongGuess", (data) => {
+            setWrongGuess(data);
+            setTimeout(() => setWrongGuess(""), 1500);
+        });
+        socket.on("correctGuess", (data) => {
+            console.log("correctGuess: ", data);
+            setCorrectGuess(data);
+        });
         setHeight(wrapper.current.clientHeight);
         setWidth(wrapper.current.clientWidth);
         setOffsetLeft(wrapper.current.offsetLeft);
@@ -36,11 +47,11 @@ export default function App() {
         setColor(newColor);
     }
 
-    console.log("isDrawer: ", isDrawer);
+    console.log("wordToDrawer: ", wordToDrawer);
 
     return (
         <div ref={wrapper} className="wrapper">
-            {isDrawer && (
+            {wordToDrawer && (
                 <Picker color={color} handleColorChange={handleColorChange} />
             )}
             <Canvas
@@ -49,10 +60,24 @@ export default function App() {
                 offsetLeft={offsetLeft}
                 offsetTop={offsetTop}
                 color={color}
-                isDrawer={isDrawer}
+                isDrawer={wordToDrawer}
             />
-            {isDrawer && <NextPlayer />}
-            {!isDrawer && <button className="next-player">Guess</button>}
+            <div className={`wrong-guess ${wrongGuess ? "display" : ""}`}>
+                {wrongGuess}
+            </div>
+            <div className={`correct-guess ${correctGuess ? "display" : ""}`}>
+                {correctGuess}
+            </div>
+            <div className="bottom-wrapper">
+                {wordToDrawer && (
+                    <>
+                        <NextPlayer />
+                        <div className="word-to-draw">{wordToDrawer}</div>
+                    </>
+                )}
+
+                {!wordToDrawer && <Guess />}
+            </div>
         </div>
     );
 }
