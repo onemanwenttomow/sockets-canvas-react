@@ -91,7 +91,7 @@ export default function Canvas({
         if (context) {
             context.strokeStyle = color;
             context.lineJoin = "round";
-            context.lineWidth = 10;
+            context.lineWidth = color === "white" ? 50 : 10;
 
             context.beginPath();
             context.moveTo(

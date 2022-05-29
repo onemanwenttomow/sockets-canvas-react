@@ -262,13 +262,30 @@ function getNewWord() {
     return newWord;
 }
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
     console.log("connect: ", socket.id);
+    console.log("drawer: ", drawer);
+    const idsSet = await io.allSockets();
+    const ids = [...idsSet];
+    console.log("ids: ", ids);
+
+    socket.emit("id", socket.id);
 
     if (!drawer) {
         drawer = socket.id;
         selectedWord = getNewWord();
-        socket.emit("isDrawer", selectedWord);
+        const idsSet = await io.allSockets();
+        const ids = [...idsSet];
+        console.log("emmiting the drawer...", socket.id);
+        socket.emit("isDrawer", {
+            selectedWord,
+            numberOfPlayers: ids.length,
+        });
+    } else {
+        socket.emit("isDrawer", {
+            selectedWord: "",
+            numberOfPlayers: ids.length,
+        });
     }
 
     socket.on("drawing", (data) => {
@@ -279,9 +296,14 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("drawDot", data);
     });
 
-    socket.on("newWord", () => {
+    socket.on("newWord", async () => {
         selectedWord = getNewWord();
-        socket.emit("isDrawer", selectedWord);
+        const idsSet = await io.allSockets();
+        const ids = [...idsSet];
+        socket.emit("isDrawer", {
+            selectedWord,
+            numberOfPlayers: ids.length,
+        });
     });
 
     socket.on("guess", (data) => {
@@ -303,16 +325,27 @@ io.on("connection", (socket) => {
         }
         const [newId] = ids.filter((id) => id !== socket.id);
         drawer = newId;
-        io.emit("isDrawer", false);
+        await io.emit("isDrawer", false);
         selectedWord = getNewWord();
-        io.to(newId).emit("isDrawer", selectedWord);
+        io.to(newId).emit("isDrawer", {
+            selectedWord,
+            numberOfPlayers: ids.length,
+        });
         io.emit("correctGuess", "");
     });
 
     socket.on("disconnect", async () => {
         console.log("disconnect", socket.id);
         const ids = await io.allSockets();
-        drawer = [...ids][0];
-        io.to(drawer).emit("isDrawer", true);
+        console.log(
+            "Math.floor(Math.random() * ids.length): ",
+            Math.floor(Math.random() * [...ids].length)
+        );
+        console.log("[...ids].length: ", [...ids].length);
+        drawer = [...ids][Math.floor(Math.random() * [...ids].length)];
+        io.to(drawer).emit("isDrawer", {
+            selectedWord,
+            numberOfPlayers: ids.length,
+        });
     });
 });

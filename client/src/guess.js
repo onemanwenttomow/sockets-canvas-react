@@ -18,6 +18,7 @@ export default function Guess() {
 
     return (
         <>
+            {/* <div className="keyboard-wrapper">keyboard</div> */}
             <div className="input-wrapper">
                 <input
                     placeholder="your guess"

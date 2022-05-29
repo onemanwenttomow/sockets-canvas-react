@@ -15,9 +15,15 @@ export default function App() {
     const [color, setColor] = useState("black");
     const [wrongGuess, setWrongGuess] = useState("");
     const [correctGuess, setCorrectGuess] = useState("");
+    const [numberOfPlayers, setNumberOfPlayers] = useState(0);
+    const [id, setId] = useState(null);
 
     useEffect(() => {
-        socket.on("isDrawer", (data) => setWordToDrawer(data));
+        socket.on("isDrawer", (data) => {
+            setWordToDrawer(data.selectedWord);
+            setNumberOfPlayers(data.numberOfPlayers);
+        });
+        socket.on("id", (data) => setId(data));
         socket.on("wrongGuess", (data) => {
             setWrongGuess(data);
             setTimeout(() => setWrongGuess(""), 1500);
@@ -73,6 +79,13 @@ export default function App() {
             <div className={`correct-guess ${correctGuess ? "display" : ""}`}>
                 {correctGuess}
             </div>
+            {true && (
+                <div className="keyboard-wrapper">
+                    <div>Number of players: {numberOfPlayers}</div>
+                    <div>Id: {id}</div>
+                    <div>isDrawer: {wordToDrawer}</div>
+                </div>
+            )}
             <div className="bottom-wrapper">
                 {wordToDrawer && (
                     <>

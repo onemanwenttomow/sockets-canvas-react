@@ -178,18 +178,20 @@ button {
     transform: translateX(calc(200px + var(--picker-gap) * 4));
 }
 
-/* .colors-wrapper div.active::after {
-    content: "";
-    position: absolute;
-    height: 4px;
-    width: 50px;
-    background-color: green;
-    bottom: -8px;
-} */
-
 .debug {
     position: absolute;
     top: 150px;
     right: 0;
     z-index: 100;
+}
+
+.keyboard-wrapper {
+    position: absolute;
+    padding: 16px;
+    bottom: 60px;
+    height: 200px;
+    width: 100%;
+    font-size: 1.3rem;
+    border-top: solid hsl(225, 73%, 20%) 4px;
+    user-select: none;
 }
