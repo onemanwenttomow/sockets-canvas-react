@@ -108,6 +108,10 @@ button {
     border: none;
 }
 
+.input-wrapper {
+    max-width: 70%;
+}
+
 .colors-wrapper {
     position: absolute;
     z-index: 2;
@@ -139,6 +143,9 @@ button {
 .red {
     background-color: red;
 }
+.white {
+    border: black solid 4px;
+}
 
 .active {
     position: absolute;
@@ -154,15 +161,18 @@ button {
     transform: translateX(0);
 }
 .active-blue {
-    transform: translateX(calc(50px + var(--picker-gap)));
+    transform: translateX(calc());
 }
 .active-yellow {
-    transform: translateX(calc(100px + var(--picker-gap) * 2));
+    transform: translateX(calc(50px + var(--picker-gap) * 1));
 }
 .active-black {
-    transform: translateX(calc(150px + var(--picker-gap) * 3));
+    transform: translateX(calc(100px + var(--picker-gap) * 2));
 }
 .active-red {
+    transform: translateX(calc(150px + var(--picker-gap) * 3));
+}
+.active-white {
     transform: translateX(calc(200px + var(--picker-gap) * 4));
 }
 

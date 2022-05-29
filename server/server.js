@@ -279,6 +279,11 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("drawDot", data);
     });
 
+    socket.on("newWord", () => {
+        selectedWord = getNewWord();
+        socket.emit("isDrawer", selectedWord);
+    });
+
     socket.on("guess", (data) => {
         console.log("selectedWord: ", selectedWord);
         if (data.toLowerCase() === selectedWord.toLowerCase()) {
@@ -301,6 +306,7 @@ io.on("connection", (socket) => {
         io.emit("isDrawer", false);
         selectedWord = getNewWord();
         io.to(newId).emit("isDrawer", selectedWord);
+        io.emit("correctGuess", "");
     });
 
     socket.on("disconnect", async () => {

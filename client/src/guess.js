@@ -18,7 +18,7 @@ export default function Guess() {
 
     return (
         <>
-            <div>
+            <div className="input-wrapper">
                 <input
                     placeholder="your guess"
                     ref={input}

@@ -1,8 +1,9 @@
 import { socket } from "./start";
 
-export default function NextPlayer() {
+export default function NextPlayer({ resetGuesses }) {
     function handleClick() {
         socket.emit("nextPlayer");
+        resetGuesses(resetGuesses);
     }
 
     return (

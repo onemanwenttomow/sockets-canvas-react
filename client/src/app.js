@@ -47,6 +47,11 @@ export default function App() {
         setColor(newColor);
     }
 
+    function resetGuesses() {
+        setCorrectGuess("");
+        setWrongGuess("");
+    }
+
     console.log("wordToDrawer: ", wordToDrawer);
 
     return (
@@ -71,12 +76,17 @@ export default function App() {
             <div className="bottom-wrapper">
                 {wordToDrawer && (
                     <>
-                        <NextPlayer />
-                        <div className="word-to-draw">{wordToDrawer}</div>
+                        <NextPlayer resetGuesses={resetGuesses} />
+                        <div
+                            className="word-to-draw"
+                            onClick={() => socket.emit("newWord")}
+                        >
+                            {wordToDrawer}
+                        </div>
                     </>
                 )}
 
-                {!wordToDrawer && <Guess />}
+                {!wordToDrawer && <Guess resetGuesses={resetGuesses} />}
             </div>
         </div>
     );
