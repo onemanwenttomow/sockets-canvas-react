@@ -29,7 +29,7 @@ export default function App() {
         setHeight(wrapper.current.clientHeight);
         setWidth(wrapper.current.clientWidth);
         setOffsetLeft(wrapper.current.offsetLeft);
-        setOffsetTop(wrapper.current.offsetTop);
+        setOffsetTop(wrapper.current.getBoundingClientRect().top);
     }
 
     function handleColorChange(newColor) {

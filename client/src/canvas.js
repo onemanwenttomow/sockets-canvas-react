@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { socket } from "./start";
-// import Picker from "./picker";
-// import NextPlayer from "./next-player";
 
 export default function Canvas({
     height,
@@ -14,14 +12,11 @@ export default function Canvas({
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
-    // const [isDrawer, setIsDrawer] = useState(false);
-    // const [color, setColor] = useState("black");
 
     useEffect(() => {
         socket.on("drawing", (data) =>
             drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
-        // socket.on("isDrawer", (data) => setIsDrawer(data));
         socket.on("drawDot", (data) =>
             drawDot({ x: data.x, y: data.y }, data.color)
         );
@@ -112,10 +107,6 @@ export default function Canvas({
             context.stroke();
         }
     }
-
-    // function handleColorChange(newColor) {
-    //     setColor(newColor);
-    // }
 
     function clearCanvas() {
         const canvas = canvasRef.current;
