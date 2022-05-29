@@ -33,6 +33,7 @@ io.on("connection", (socket) => {
 
     if (!drawer) {
         drawer = socket.id;
+        console.log("emitting", socket.id);
         socket.emit("isDrawer", true);
     }
 

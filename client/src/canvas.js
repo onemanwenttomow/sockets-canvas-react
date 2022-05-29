@@ -1,20 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { socket } from "./start";
-import Picker from "./picker";
-import NextPlayer from "./next-player";
+// import Picker from "./picker";
+// import NextPlayer from "./next-player";
 
-export default function Canvas({ height, width, offsetLeft, offsetTop }) {
+export default function Canvas({
+    height,
+    width,
+    offsetLeft,
+    offsetTop,
+    isDrawer,
+    color,
+}) {
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
-    const [isDrawer, setIsDrawer] = useState(false);
-    const [color, setColor] = useState("black");
+    // const [isDrawer, setIsDrawer] = useState(false);
+    // const [color, setColor] = useState("black");
 
     useEffect(() => {
         socket.on("drawing", (data) =>
             drawLine(data.mousePosition, data.newMousePosition, data.color)
         );
-        socket.on("isDrawer", (data) => setIsDrawer(data));
+        // socket.on("isDrawer", (data) => setIsDrawer(data));
         socket.on("drawDot", (data) =>
             drawDot({ x: data.x, y: data.y }, data.color)
         );
@@ -106,9 +113,9 @@ export default function Canvas({ height, width, offsetLeft, offsetTop }) {
         }
     }
 
-    function handleColorChange(newColor) {
-        setColor(newColor);
-    }
+    // function handleColorChange(newColor) {
+    //     setColor(newColor);
+    // }
 
     function clearCanvas() {
         const canvas = canvasRef.current;
@@ -118,9 +125,6 @@ export default function Canvas({ height, width, offsetLeft, offsetTop }) {
 
     return (
         <>
-            {isDrawer && (
-                <Picker color={color} handleColorChange={handleColorChange} />
-            )}
             <canvas
                 ref={canvasRef}
                 height={height}
@@ -133,7 +137,6 @@ export default function Canvas({ height, width, offsetLeft, offsetTop }) {
                 onTouchMove={paint}
                 onTouchEnd={exitPaint}
             />
-            {isDrawer && <NextPlayer />}
         </>
     );
 }
