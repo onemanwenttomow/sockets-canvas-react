@@ -3,7 +3,7 @@ import { socket } from "./start";
 import Picker from "./picker";
 import NextPlayer from "./next-player";
 
-export default function Canvas({ height, width, offsetLeft }) {
+export default function Canvas({ height, width, offsetLeft, offsetTop }) {
     const canvasRef = useRef(null);
     const [isPainting, setIsPainting] = useState(false);
     const [mousePosition, setMousePosition] = useState(null);
@@ -73,12 +73,11 @@ export default function Canvas({ height, width, offsetLeft }) {
     function getCoordinates(event) {
         if (!canvasRef.current) return;
 
-        const canvas = canvasRef.current;
         const x = event.pageX || event.touches[0].clientX;
         const y = event.pageY || event.touches[0].clientY;
         return {
             x: (x - offsetLeft) / width,
-            y: (y - canvas.offsetTop) / height,
+            y: (y - offsetTop) / height,
         };
     }
 
