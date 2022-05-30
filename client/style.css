@@ -269,7 +269,7 @@ button {
 }
 
 .find-image-wrapper {
-    padding-top: 12px;
+    padding-top: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 110px;
@@ -292,4 +292,11 @@ button {
 .question-icon,
 .what-the-heck {
     cursor: pointer;
+    place-self: center;
+}
+
+.what-the-heck span {
+    background-color: hsl(225, 73%, 20%);
+    color: white;
+    padding: 0px 8px;
 }
