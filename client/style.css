@@ -25,6 +25,11 @@ body {
     --picker-gap: 16px;
 }
 
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
 canvas {
     height: 100%;
     width: 100%;
@@ -115,11 +120,7 @@ button {
 }
 
 .colors-wrapper {
-    position: absolute;
-    z-index: 2;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     display: flex;
     gap: var(--picker-gap);
 }
@@ -244,4 +245,26 @@ button {
 
 .enter-key {
     padding: 0 4px;
+}
+
+.number-of-players-wrapper {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    z-index: 5;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.number-of-players {
+    /* padding: 2px 8px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    color: white;
+    background-color: hsl(225, 73%, 20%);
+    border-radius: 50%;
 }

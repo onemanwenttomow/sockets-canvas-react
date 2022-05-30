@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { socket } from "./start";
-import BackSpace from "./back-space";
+import BackSpaceIcon from "./icons/back-space";
 
 const keyboardRows = [
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -46,7 +46,7 @@ export default function Guess() {
                                 key={i}
                                 onClick={() => handleKeyPress(key)}
                             >
-                                {key === "backspace" ? <BackSpace /> : key}
+                                {key === "backspace" ? <BackSpaceIcon /> : key}
                             </div>
                         ))}
                     </div>

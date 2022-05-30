@@ -4,6 +4,7 @@ import Canvas from "./canvas";
 import Picker from "./picker";
 import NextPlayer from "./next-player";
 import Guess from "./guess";
+import UserIcon from "./icons/user";
 
 export default function App() {
     const wrapper = useRef(null);
@@ -62,9 +63,10 @@ export default function App() {
 
     return (
         <div ref={wrapper} className="wrapper">
-            {wordToDrawer && (
-                <Picker color={color} handleColorChange={handleColorChange} />
-            )}
+            <div className="number-of-players-wrapper">
+                <UserIcon />
+                <div className="number-of-players">{numberOfPlayers}</div>
+            </div>
             <Canvas
                 height={height}
                 width={width}
@@ -73,6 +75,7 @@ export default function App() {
                 color={color}
                 isDrawer={wordToDrawer}
             />
+
             <div className={`wrong-guess ${wrongGuess ? "display" : ""}`}>
                 {wrongGuess}
             </div>
@@ -81,7 +84,13 @@ export default function App() {
             </div>
             {wordToDrawer && (
                 <div className="extra-wrapper extra">
-                    <div>Number of players: {numberOfPlayers}</div>
+                    {wordToDrawer && (
+                        <Picker
+                            color={color}
+                            handleColorChange={handleColorChange}
+                        />
+                    )}
+
                     <div>Id: {id}</div>
                 </div>
             )}
