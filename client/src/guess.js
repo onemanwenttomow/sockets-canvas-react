@@ -1,32 +1,66 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { socket } from "./start";
+import BackSpace from "./back-space";
+
+const keyboardRows = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+    ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"],
+];
 
 export default function Guess() {
     const input = useRef(null);
+    const [userInput, setUserInput] = useState("");
 
-    function handleClick() {
-        socket.emit("guess", input.current.value);
-        input.current.value = "";
+    function handleSubmit() {
+        socket.emit("guess", userInput);
+        setUserInput("");
     }
 
-    function handleKeyDown(e) {
-        if (e.key === "Enter") {
-            socket.emit("guess", input.current.value);
-            input.current.value = "";
+    function handleKeyPress(key) {
+        console.log("clicked: ", key);
+        if (key === "backspace") {
+            return setUserInput((old) => old.slice(0, -1));
         }
+        if (key === "enter") {
+            return handleSubmit();
+        }
+        setUserInput((old) => old + key);
     }
 
     return (
         <>
-            {/* <div className="keyboard-wrapper">keyboard</div> */}
+            <div className="extra-wrapper keyboard">
+                {keyboardRows.map((row, i) => (
+                    <div
+                        key={i}
+                        className={`keyboard-row ${
+                            i === 1 ? "keyboard-row-2" : ""
+                        }`}
+                    >
+                        {row.map((key, i) => (
+                            <div
+                                className={`keyboard-key ${
+                                    key === "enter" ? "enter-key" : ""
+                                }`}
+                                key={i}
+                                onClick={() => handleKeyPress(key)}
+                            >
+                                {key === "backspace" ? <BackSpace /> : key}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
             <div className="input-wrapper">
                 <input
                     placeholder="your guess"
                     ref={input}
-                    onKeyDown={handleKeyDown}
+                    disabled
+                    value={userInput}
                 />
             </div>
-            <button className="next-player" onClick={handleClick}>
+            <button className="next-player" onClick={handleSubmit}>
                 Guess
             </button>
         </>

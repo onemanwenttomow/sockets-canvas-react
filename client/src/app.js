@@ -11,7 +11,7 @@ export default function App() {
     const [width, setWidth] = useState(null);
     const [offsetLeft, setOffsetLeft] = useState(0);
     const [offsetTop, setOffsetTop] = useState(0);
-    const [wordToDrawer, setWordToDrawer] = useState(false);
+    const [wordToDrawer, setWordToDrawer] = useState("");
     const [color, setColor] = useState("black");
     const [wrongGuess, setWrongGuess] = useState("");
     const [correctGuess, setCorrectGuess] = useState("");
@@ -19,26 +19,25 @@ export default function App() {
     const [id, setId] = useState(null);
 
     useEffect(() => {
-        socket.on("isDrawer", (data) => {
-            setWordToDrawer(data.selectedWord);
-            setNumberOfPlayers(data.numberOfPlayers);
-        });
+        socket.on("isDrawer", (data) => setWordToDrawer(data));
+        socket.on("numberOfPlayers", (data) => setNumberOfPlayers(data));
         socket.on("id", (data) => setId(data));
         socket.on("wrongGuess", (data) => {
             setWrongGuess(data);
             setTimeout(() => setWrongGuess(""), 1500);
         });
-        socket.on("correctGuess", (data) => {
-            console.log("correctGuess: ", data);
-            setCorrectGuess(data);
-        });
-        setHeight(wrapper.current.clientHeight);
-        setWidth(wrapper.current.clientWidth);
-        setOffsetLeft(wrapper.current.offsetLeft);
-        setOffsetTop(wrapper.current.getBoundingClientRect().top);
+        socket.on("correctGuess", (data) => setCorrectGuess(data));
+
+        onResize();
+
         window.addEventListener("resize", onResize, false);
+
         return () => {
             socket.removeListener("isDrawer");
+            socket.removeListener("id");
+            socket.removeListener("wrongGuess");
+            socket.removeListener("correctGuess");
+            socket.removeListener("numberOfPlayers");
         };
     }, [width, height]);
 
@@ -59,6 +58,7 @@ export default function App() {
     }
 
     console.log("wordToDrawer: ", wordToDrawer);
+    console.log("numberOfPlayers: ", numberOfPlayers);
 
     return (
         <div ref={wrapper} className="wrapper">
@@ -79,11 +79,10 @@ export default function App() {
             <div className={`correct-guess ${correctGuess ? "display" : ""}`}>
                 {correctGuess}
             </div>
-            {true && (
-                <div className="keyboard-wrapper">
+            {wordToDrawer && (
+                <div className="extra-wrapper extra">
                     <div>Number of players: {numberOfPlayers}</div>
                     <div>Id: {id}</div>
-                    <div>isDrawer: {wordToDrawer}</div>
                 </div>
             )}
             <div className="bottom-wrapper">

@@ -270,22 +270,17 @@ io.on("connection", async (socket) => {
     console.log("ids: ", ids);
 
     socket.emit("id", socket.id);
+    io.emit("numberOfPlayers", ids.length);
 
     if (!drawer) {
         drawer = socket.id;
         selectedWord = getNewWord();
-        const idsSet = await io.allSockets();
-        const ids = [...idsSet];
         console.log("emmiting the drawer...", socket.id);
-        socket.emit("isDrawer", {
-            selectedWord,
-            numberOfPlayers: ids.length,
-        });
+        console.log("ids.length: ", ids.length);
+        socket.emit("isDrawer", selectedWord);
     } else {
-        socket.emit("isDrawer", {
-            selectedWord: "",
-            numberOfPlayers: ids.length,
-        });
+        console.log("ids.length: ", ids.length);
+        socket.emit("isDrawer", "");
     }
 
     socket.on("drawing", (data) => {
@@ -300,10 +295,8 @@ io.on("connection", async (socket) => {
         selectedWord = getNewWord();
         const idsSet = await io.allSockets();
         const ids = [...idsSet];
-        socket.emit("isDrawer", {
-            selectedWord,
-            numberOfPlayers: ids.length,
-        });
+        socket.emit("isDrawer", selectedWord);
+        io.emit("numberOfPlayers", ids.length);
     });
 
     socket.on("guess", (data) => {
@@ -325,27 +318,17 @@ io.on("connection", async (socket) => {
         }
         const [newId] = ids.filter((id) => id !== socket.id);
         drawer = newId;
-        await io.emit("isDrawer", false);
+        await io.emit("isDrawer", "");
         selectedWord = getNewWord();
-        io.to(newId).emit("isDrawer", {
-            selectedWord,
-            numberOfPlayers: ids.length,
-        });
+        io.to(newId).emit("isDrawer", selectedWord);
         io.emit("correctGuess", "");
     });
 
     socket.on("disconnect", async () => {
         console.log("disconnect", socket.id);
         const ids = await io.allSockets();
-        console.log(
-            "Math.floor(Math.random() * ids.length): ",
-            Math.floor(Math.random() * [...ids].length)
-        );
-        console.log("[...ids].length: ", [...ids].length);
         drawer = [...ids][Math.floor(Math.random() * [...ids].length)];
-        io.to(drawer).emit("isDrawer", {
-            selectedWord,
-            numberOfPlayers: ids.length,
-        });
+        io.to(drawer).emit("isDrawer", selectedWord);
+        io.emit("numberOfPlayers", ids.length);
     });
 });
