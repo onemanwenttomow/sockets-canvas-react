@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import { socket } from "./start";
 import Canvas from "./canvas";
-import Picker from "./picker";
 import NextPlayer from "./next-player";
 import Guess from "./guess";
 import UserIcon from "./icons/user";
+import DrawerTools from "./drawer-tools";
 
 export default function App() {
     const wrapper = useRef(null);
@@ -17,12 +17,10 @@ export default function App() {
     const [wrongGuess, setWrongGuess] = useState("");
     const [correctGuess, setCorrectGuess] = useState("");
     const [numberOfPlayers, setNumberOfPlayers] = useState(0);
-    const [id, setId] = useState(null);
 
     useEffect(() => {
         socket.on("isDrawer", (data) => setWordToDrawer(data));
         socket.on("numberOfPlayers", (data) => setNumberOfPlayers(data));
-        socket.on("id", (data) => setId(data));
         socket.on("wrongGuess", (data) => {
             setWrongGuess(data);
             setTimeout(() => setWrongGuess(""), 1500);
@@ -83,16 +81,11 @@ export default function App() {
                 {correctGuess}
             </div>
             {wordToDrawer && (
-                <div className="extra-wrapper extra">
-                    {wordToDrawer && (
-                        <Picker
-                            color={color}
-                            handleColorChange={handleColorChange}
-                        />
-                    )}
-
-                    <div>Id: {id}</div>
-                </div>
+                <DrawerTools
+                    wordToDrawer={wordToDrawer}
+                    handleColorChange={handleColorChange}
+                    color={color}
+                />
             )}
             <div className="bottom-wrapper">
                 {wordToDrawer && (

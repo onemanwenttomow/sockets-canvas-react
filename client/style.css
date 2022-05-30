@@ -258,7 +258,6 @@ button {
 }
 
 .number-of-players {
-    /* padding: 2px 8px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -267,4 +266,30 @@ button {
     color: white;
     background-color: hsl(225, 73%, 20%);
     border-radius: 50%;
+}
+
+.find-image-wrapper {
+    padding-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 110px;
+    text-align: center;
+}
+
+.image-to-draw {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.question-icon,
+.what-the-heck {
+    cursor: pointer;
 }
