@@ -300,3 +300,9 @@ button {
     color: white;
     padding: 0px 8px;
 }
+
+.welcome {
+    height: 100%;
+    background-color: white;
+    padding: 8px;
+}
