@@ -298,7 +298,7 @@ function getNewDrawer(io, room, socket) {
     const possibleNewDrawers = ids.filter((id) => id !== socket.id);
     const newId =
         possibleNewDrawers[
-            Math.floor(Math.random() * possibleNewDrawers.length)
+            Math.floor(Math.random() * possibleNewDrawers.length - 1)
         ];
     return newId;
 }
