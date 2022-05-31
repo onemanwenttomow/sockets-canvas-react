@@ -404,7 +404,7 @@ io.on("connection", async (socket) => {
 
         await io.to(room).emit("isDrawer", "");
 
-        const newWord = getNewWord();
+        const newWord = getNewWord(room);
         rooms[room].selectedWord = newWord;
         io.to(newId).emit("isDrawer", newWord);
         io.to(room).emit("correctGuess", "");
