@@ -285,8 +285,8 @@ function getNewWord(room) {
 }
 
 let users = {};
-function getRoom() {
-    return users.id;
+function getRoom(socket) {
+    return users[socket.id];
 }
 
 function getNewDrawer(io, room, socket) {
@@ -345,7 +345,7 @@ io.on("connection", async (socket) => {
         console.log("*****************");
         console.log("DRAWING");
         console.log("*****************");
-        const room = getRoom();
+        const room = getRoom(socket);
         console.log("room: ", room);
         socket.broadcast.to(room).emit("drawing", data);
     });
@@ -354,7 +354,7 @@ io.on("connection", async (socket) => {
         console.log("*****************");
         console.log("DRAW DOT");
         console.log("*****************");
-        const room = getRoom();
+        const room = getRoom(socket);
         console.log("room: ", room);
         socket.broadcast.to(room).emit("drawDot", data);
     });
@@ -363,14 +363,14 @@ io.on("connection", async (socket) => {
         console.log("*****************");
         console.log("NEW WORD");
         console.log("*****************");
-        const room = getRoom();
+        const room = getRoom(socket);
         const newWord = getNewWord();
         rooms[room].selectedWord = newWord;
         socket.emit("isDrawer", newWord);
     });
 
     socket.on("guess", (data) => {
-        const room = getRoom();
+        const room = getRoom(socket);
         const selectedWord = rooms[room].selectedWord;
         if (data.toLowerCase() === selectedWord.toLowerCase()) {
             console.log("MATCH!");
@@ -382,7 +382,7 @@ io.on("connection", async (socket) => {
 
     socket.on("nextPlayer", async () => {
         console.log("NEXT PLAYER");
-        const room = getRoom();
+        const room = getRoom(socket);
         io.to(room).emit("clearCanvas");
 
         const newId = getNewDrawer(io, room, socket);
