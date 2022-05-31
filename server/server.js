@@ -26,9 +26,6 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
-// let drawer = null;
-// let selectedWord = "";
-
 let words = [
     "Aardvark",
     "Albatross",
@@ -288,9 +285,8 @@ function getNewWord(room) {
 }
 
 let users = {};
-function getRoom(socket) {
+function getRoom() {
     return users.id;
-    // return [...socket.rooms][0];
 }
 
 function getNewDrawer(io, room, socket) {
@@ -304,29 +300,20 @@ function getNewDrawer(io, room, socket) {
 }
 
 io.on("connection", async (socket) => {
-    // console.log("connect: ", socket.id);
-    // console.log("drawer: ", drawer);
-    const idsSet = await io.allSockets();
-    const ids = [...idsSet];
-    // console.log("ids: ", ids);
-
-    io.emit("numberOfPlayers", ids.length);
-
-    // if (!drawer) {
-    //     drawer = socket.id;
-    //     selectedWord = getNewWord();
-    //     // console.log("emmiting the drawer...", socket.id);
-    //     // console.log("ids.length: ", ids.length);
-    //     socket.emit("isDrawer", selectedWord);
-    // } else {
-    //     // console.log("ids.length: ", ids.length);
-    //     socket.emit("isDrawer", "");
-    // }
+    let roomCount = {};
+    Object.values(users).forEach((el) =>
+        el in roomCount ? roomCount[el]++ : (roomCount[el] = 1)
+    );
+    console.log("rooms: ", roomCount);
+    io.emit("rooms", roomCount);
+    console.log("users: ", users);
 
     socket.on("joinedRoom", (room) => {
         console.log("JOINED ROOM");
         const clients = io.sockets.adapter.rooms.get(room);
         console.log("clients: ", clients);
+        const numClients = clients ? clients.size : 0;
+        io.to(room).emit("numberOfPlayers", numClients);
         if (clients) {
             const ids = [...clients];
             if (ids.includes(socket.id)) {
@@ -338,7 +325,8 @@ io.on("connection", async (socket) => {
         // join room
         // TODO set the drawer if no drawer already assigned...
         socket.join(room);
-        users.id = room;
+        users[socket.id] = room;
+        console.log("users: ", users);
         console.log("rooms[room].drawer: ", rooms[room].drawer);
         if (!rooms[room].drawer) {
             rooms[room].drawer = socket.id;
@@ -351,15 +339,13 @@ io.on("connection", async (socket) => {
             // console.log("ids.length: ", ids.length);
             socket.emit("isDrawer", "");
         }
-        const numClients = clients ? clients.size : 0;
-        io.to(room).emit("numberOfPlayers", numClients);
     });
 
     socket.on("drawing", (data) => {
         console.log("*****************");
         console.log("DRAWING");
         console.log("*****************");
-        const room = getRoom(socket, io);
+        const room = getRoom();
         console.log("room: ", room);
         socket.broadcast.to(room).emit("drawing", data);
     });
@@ -368,7 +354,7 @@ io.on("connection", async (socket) => {
         console.log("*****************");
         console.log("DRAW DOT");
         console.log("*****************");
-        const room = getRoom(socket, io);
+        const room = getRoom();
         console.log("room: ", room);
         socket.broadcast.to(room).emit("drawDot", data);
     });
@@ -377,14 +363,14 @@ io.on("connection", async (socket) => {
         console.log("*****************");
         console.log("NEW WORD");
         console.log("*****************");
-        const room = getRoom(socket, io);
+        const room = getRoom();
         const newWord = getNewWord();
         rooms[room].selectedWord = newWord;
         socket.emit("isDrawer", newWord);
     });
 
     socket.on("guess", (data) => {
-        const room = getRoom(socket, io);
+        const room = getRoom();
         const selectedWord = rooms[room].selectedWord;
         if (data.toLowerCase() === selectedWord.toLowerCase()) {
             console.log("MATCH!");
@@ -396,7 +382,7 @@ io.on("connection", async (socket) => {
 
     socket.on("nextPlayer", async () => {
         console.log("NEXT PLAYER");
-        const room = getRoom(socket, io);
+        const room = getRoom();
         io.to(room).emit("clearCanvas");
 
         const newId = getNewDrawer(io, room, socket);
@@ -411,11 +397,8 @@ io.on("connection", async (socket) => {
     });
 
     socket.on("disconnecting", async () => {
-        console.log("disconnecting", socket.id);
-        console.log("console.log(socket.rooms): ", socket.rooms);
         for (let i = 1; i <= 4; i++) {
             const room = i.toString();
-            console.log("socket.rooms.has(room): ", socket.rooms.has(room));
             if (socket.rooms.has(room)) {
                 if (rooms[room].drawer === socket.id) {
                     const newId = getNewDrawer(io, room, socket);
@@ -440,6 +423,6 @@ io.on("connection", async (socket) => {
             const numClients = clients ? clients.size : 0;
             io.to(room).emit("numberOfPlayers", numClients);
         }
-        delete users.id;
+        delete users[socket.id];
     });
 });
