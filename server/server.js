@@ -368,7 +368,7 @@ io.on("connection", async (socket) => {
         console.log("NEW WORD");
         console.log("*****************");
         const room = getRoom(socket);
-        const newWord = getNewWord();
+        const newWord = getNewWord(room);
         rooms[room].selectedWord = newWord;
         socket.emit("isDrawer", newWord);
     });
