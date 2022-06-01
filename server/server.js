@@ -278,7 +278,7 @@ const rooms = {
 
 function getNewWord(room) {
     const [newWord] = rooms[room].words.splice(
-        Math.floor(Math.random() * words.length),
+        Math.floor(Math.random() * rooms[room].words.length - 1),
         1
     );
     return newWord;
@@ -296,10 +296,13 @@ function getNewDrawer(io, room, socket) {
         return;
     }
     const possibleNewDrawers = ids.filter((id) => id !== socket.id);
+    console.log("socket.id: ", socket.id);
+    console.log("possibleNewDrawers: ", possibleNewDrawers);
     const newId =
         possibleNewDrawers[
-            Math.floor(Math.random() * possibleNewDrawers.length - 1)
+            Math.abs(Math.floor(Math.random() * possibleNewDrawers.length - 1))
         ];
+    console.log("newId: ", newId);
     return newId;
 }
 
@@ -395,9 +398,10 @@ io.on("connection", async (socket) => {
         await io.to(room).emit("isDrawer", "");
 
         const newWord = getNewWord(room);
+        console.log("newWord: ", newWord);
         rooms[room].selectedWord = newWord;
-        io.to(newId).emit("isDrawer", newWord);
-        io.to(room).emit("correctGuess", "");
+        await io.to(newId).emit("isDrawer", newWord);
+        await io.to(room).emit("correctGuess", "");
     });
 
     socket.on("disconnecting", async () => {
