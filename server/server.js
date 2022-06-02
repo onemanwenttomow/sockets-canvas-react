@@ -29,21 +29,18 @@ server.listen(process.env.PORT || 3001, function () {
 const words = require("./words.json");
 const numberOfRooms = 4;
 let rooms = {};
+let users = {};
 
 for (let i = 1; i <= numberOfRooms; i++) {
-    console.log("i", i);
     rooms[i] = { drawer: null, selectedWord: "", words: words.slice() };
 }
 
 function getNewWord(room) {
-    const [newWord] = rooms[room].words.splice(
-        Math.floor(Math.random() * rooms[room].words.length - 1),
-        1
-    );
+    const random = Math.floor(Math.random() * rooms[room].words.length - 1);
+    const [newWord] = rooms[room].words.splice(random, 1);
     return newWord;
 }
 
-let users = {};
 function getRoom(socket) {
     return users[socket.id];
 }
@@ -55,23 +52,8 @@ function getNewDrawer(io, room, socket) {
         return;
     }
     const possibleNewDrawers = ids.filter((id) => id !== socket.id);
-    console.log("socket.id: ", socket.id);
-    console.log("possibleNewDrawers: ", possibleNewDrawers);
-    let newId;
-
-    // TODO look at the random selection code...
-    if (possibleNewDrawers.length === 1) {
-        newId = possibleNewDrawers[0];
-    } else {
-        newId =
-            possibleNewDrawers[
-                Math.abs(
-                    Math.floor(Math.random() * possibleNewDrawers.length - 1)
-                )
-            ];
-    }
-    console.log("newId: ", newId);
-    return newId;
+    const random = Math.floor(Math.random() * possibleNewDrawers.length);
+    return possibleNewDrawers[random];
 }
 
 io.on("connection", async (socket) => {
